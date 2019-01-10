@@ -1,4 +1,5 @@
 const reservationModel = require('../models/reservation.model');
+const userScheme = require('../models/user.models');
 const reservationCtrl = {};
 
 reservationCtrl.allReservation = async (req, res) =>{
@@ -7,17 +8,23 @@ reservationCtrl.allReservation = async (req, res) =>{
 }
 
 reservationCtrl.createReservation = async ( req, res) =>{
-    const newReservation = new reservationModel({
-        codigo: req.body.codigo,
-        tipoReserva: req.body.tipoReserva,
-        fechaReserva:req.body.fechaReserva
-    });
-    await newReservation.save();
-    res.json({status: 'Reservacion creada'});
+    try {
+        const newReservation = new reservationModel({
+            codigo: req.body.codigo,
+            tipoReserva: req.body.tipoReserva,
+            fechaReserva:req.body.fechaReserva,
+            user :  req.body.user
+        });
+        await newReservation.save();
+        res.json({status: 'Reservacion creada'});
+    } catch (error) {
+        console.log(error)
+    }
+
 }
 
 reservationCtrl.findByIdReservation = async (req, res) =>{
-    const  reservation = reservationModel.findById(req.params.id)
+    const  reservation = await reservationModel.findById(req.params.id)
     res.json(reservation);
 }
 
