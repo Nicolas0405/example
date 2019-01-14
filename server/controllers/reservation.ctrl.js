@@ -1,5 +1,4 @@
 const reservationModel = require('../models/reservation.model');
-const userScheme = require('../models/user.models');
 const reservationCtrl = {};
 
 reservationCtrl.allReservation = async (req, res) =>{
