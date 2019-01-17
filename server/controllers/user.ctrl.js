@@ -1,5 +1,52 @@
-const userModel = require('../models/user.models')
+const pool = require('../database')
 const userCtrl = {};
+
+
+userCtrl.consultarUsuario = (req, res) =>{
+    pool.query('SELECT * FROM personaje',(error, result)=>{
+        if(error) throw error;
+
+        res.json(result);
+    })
+
+};
+
+userCtrl.crearUsuario = (req, res) =>{
+    pool.query('INSERT INTO personaje SET ?', req.body, (error, result) =>{
+        if(error) throw error;
+
+        res.status(201).send(`User added with  ID: ${result.insertId}`);
+    })
+}
+
+userCtrl.consultarUsuarioPorId = (req, res) =>{
+    const id = req.params.id;
+    pool.query('SELECT * FROM personaje WHERE personaje.personaje_id = ?', id ,(error, result)=>{
+        if(error) throw error;
+
+        res.send(result);
+    })
+}
+
+userCtrl.editarUsuario = (req, res)=>{
+    const id = req.params.id;
+    pool.query('UPDATE personaje SET ? WHERE personaje.personaje_id = ?', [req.body, id], (error,result)=>{
+        if(error) throw error;
+
+        res.send('Usuario actualizado satisfactoriamente');
+    });
+};
+
+
+
+userCtrl.eliminarUsuario = (req, res)=>{
+    const id = req.params.id;
+    pool.query('DELETE FROM personaje WHERE personaje_id = ?', id, (error, result)=>{
+        if(error) throw error;
+
+        res.send('Usuario Eliminado');
+    })
+}
 
 userCtrl.allUsers = async (req, res)=>{
     const users = await userModel.find();
@@ -11,7 +58,7 @@ userCtrl.createUser = async(req,res) =>{
         cedula:req.body.cedula,
         nombre:req.body.nombre,
         apellido:req.body.apellido,
-        correo: req.body.correo,
+        correo: req.body.correo,    
         contraseña: req.body.contraseña,
         telefono:req.body.telefono
     });
@@ -46,5 +93,6 @@ userCtrl.deleteUser = async(req, res)=>{
     await userModel.findByIdAndRemove(req.params.id);
     res.json({status: 'usuario Eliminado'})
 }
+
 
 module.exports = userCtrl;
